@@ -1,0 +1,325 @@
+<meta charset="utf-8">
+<title>资讯整理项目复盘</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+:root {
+  --bg: #f4f7f8;
+  --paper: #ffffff;
+  --ink: #17212b;
+  --muted: #5e6c78;
+  --faint: #e7edef;
+  --line: #d3dfe3;
+  --accent: #0b7285;
+  --accent-strong: #075967;
+  --accent-soft: #e3f2f4;
+  --signal: #d69b1e;
+  --signal-soft: #fff4d6;
+  --success: #2d8068;
+  --shadow: 0 16px 40px rgba(22, 53, 64, .08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11191d;
+    --paper: #182328;
+    --ink: #e9f0f1;
+    --muted: #a7b8bd;
+    --faint: #233238;
+    --line: #34474e;
+    --accent: #5cc6d5;
+    --accent-strong: #8ae0e8;
+    --accent-soft: #173940;
+    --signal: #f0bd4e;
+    --signal-soft: #433516;
+    --success: #71c9a9;
+    --shadow: 0 18px 42px rgba(0, 0, 0, .22);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11191d;
+  --paper: #182328;
+  --ink: #e9f0f1;
+  --muted: #a7b8bd;
+  --faint: #233238;
+  --line: #34474e;
+  --accent: #5cc6d5;
+  --accent-strong: #8ae0e8;
+  --accent-soft: #173940;
+  --signal: #f0bd4e;
+  --signal-soft: #433516;
+  --success: #71c9a9;
+  --shadow: 0 18px 42px rgba(0, 0, 0, .22);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  line-height: 1.75;
+}
+a { color: var(--accent-strong); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+.shell { max-width: 1260px; margin: 0 auto; padding: 44px 32px 96px; }
+.masthead { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 42px; align-items: end; padding: 24px 0 36px; border-bottom: 1px solid var(--line); }
+.kicker { color: var(--accent); font: 500 12px/1.2 "IBM Plex Mono", monospace; letter-spacing: .11em; text-transform: uppercase; }
+h1, h2, h3, h4 { font-family: "IBM Plex Serif", "Noto Serif SC", Georgia, serif; text-wrap: balance; }
+h1 { max-width: 800px; margin: 14px 0 12px; font-size: clamp(36px, 5vw, 66px); line-height: 1.08; letter-spacing: 0; }
+.dek { max-width: 720px; margin: 0; color: var(--muted); font-size: 17px; }
+.meta { border-left: 3px solid var(--signal); padding-left: 16px; color: var(--muted); font-size: 13px; }
+.meta strong { display: block; color: var(--ink); font: 500 18px/1.3 "IBM Plex Mono", monospace; }
+.layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 52px; margin-top: 44px; }
+.rail { position: sticky; top: 24px; align-self: start; }
+.rail-title { margin-bottom: 12px; color: var(--muted); font: 500 11px/1.3 "IBM Plex Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+.rail a { display: block; padding: 7px 0; color: var(--muted); font-size: 13px; text-decoration: none; border-left: 1px solid var(--line); padding-left: 13px; }
+.rail a:hover { color: var(--accent-strong); border-left-color: var(--accent); }
+main { min-width: 0; }
+section { scroll-margin-top: 24px; margin-bottom: 62px; }
+.section-head { display: flex; gap: 14px; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 22px; }
+.section-no { color: var(--accent); font: 500 13px/1 "IBM Plex Mono", monospace; }
+h2 { margin: 0; font-size: 28px; line-height: 1.25; }
+h3 { margin: 30px 0 10px; font-size: 20px; line-height: 1.35; }
+h4 { margin: 20px 0 8px; font-size: 16px; }
+p { max-width: 70ch; margin: 10px 0; }
+ul, ol { max-width: 76ch; padding-left: 22px; }
+li { margin: 7px 0; }
+strong { font-weight: 700; }
+code, .mono { font-family: "IBM Plex Mono", monospace; font-size: .9em; }
+.lead { color: var(--ink); font-size: 19px; line-height: 1.65; }
+.thesis { border-left: 4px solid var(--accent); background: var(--accent-soft); padding: 18px 22px; margin: 24px 0; max-width: 850px; }
+.thesis p { margin: 0; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 24px 0; }
+.metric { background: var(--paper); border: 1px solid var(--line); border-top: 3px solid var(--accent); padding: 17px 18px; box-shadow: var(--shadow); }
+.metric .value { display: block; margin-bottom: 5px; color: var(--accent-strong); font: 600 25px/1.2 "IBM Plex Mono", monospace; }
+.metric .label { color: var(--muted); font-size: 13px; }
+.quote { margin: 22px 0; padding: 18px 22px; background: var(--signal-soft); border-left: 3px solid var(--signal); max-width: 850px; }
+.quote p { margin: 0; }
+.timeline { position: relative; margin: 28px 0 6px; padding-left: 30px; }
+.timeline:before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 10px; width: 1px; background: var(--line); }
+.event { position: relative; margin: 0 0 26px; }
+.event:before { content: ""; position: absolute; left: -27px; top: 9px; width: 9px; height: 9px; border: 2px solid var(--accent); background: var(--bg); border-radius: 50%; }
+.event-date { color: var(--accent); font: 500 12px/1.3 "IBM Plex Mono", monospace; }
+.event h3 { margin: 4px 0 5px; font-size: 19px; }
+.event p { margin: 0; color: var(--muted); }
+.compare { width: 100%; border-collapse: collapse; margin: 20px 0; background: var(--paper); box-shadow: var(--shadow); font-size: 14px; }
+.compare th, .compare td { text-align: left; vertical-align: top; padding: 13px 15px; border-bottom: 1px solid var(--line); }
+.compare th { width: 24%; color: var(--accent-strong); font-weight: 700; background: var(--accent-soft); }
+.compare tr:last-child th, .compare tr:last-child td { border-bottom: 0; }
+.pipeline { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; margin: 26px 0; }
+.step { position: relative; min-height: 140px; padding: 16px 14px 16px 15px; border-top: 3px solid var(--accent); border-right: 1px solid var(--line); background: var(--paper); }
+.step:first-child { border-left: 1px solid var(--line); }
+.step-num { color: var(--accent); font: 500 12px/1 "IBM Plex Mono", monospace; }
+.step h4 { margin: 10px 0 6px; font-size: 16px; }
+.step p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.callout { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; margin: 24px 0; padding: 20px; background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.callout-label { color: var(--accent); font: 500 11px/1.5 "IBM Plex Mono", monospace; letter-spacing: .1em; text-transform: uppercase; }
+.callout p { margin: 0; }
+.issue { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; margin: 14px 0; padding: 15px 17px; background: var(--paper); border-left: 3px solid var(--signal); }
+.issue .num { color: var(--signal); font: 500 14px/1.5 "IBM Plex Mono", monospace; }
+.issue h4 { margin: 0 0 5px; }
+.issue p { margin: 0; color: var(--muted); font-size: 14px; }
+.answer { margin: 17px 0; padding: 17px 20px; border: 1px solid var(--line); background: var(--paper); }
+.answer summary { cursor: pointer; color: var(--accent-strong); font-weight: 700; }
+.answer p { margin: 12px 0 0; color: var(--muted); }
+.answer p:first-of-type { color: var(--ink); }
+.source-list { columns: 2; column-gap: 36px; padding-left: 19px; font-size: 13px; color: var(--muted); }
+.source-list li { break-inside: avoid; margin: 8px 0; }
+.footer { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+@media (max-width: 900px) {
+  .masthead { grid-template-columns: 1fr; gap: 20px; }
+  .layout { grid-template-columns: 1fr; gap: 24px; }
+  .rail { position: static; display: flex; flex-wrap: wrap; gap: 0 18px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+  .rail-title { width: 100%; }
+  .rail a { border-left: 0; padding-left: 0; }
+  .grid { grid-template-columns: 1fr 1fr; }
+  .pipeline { grid-template-columns: 1fr; }
+  .step, .step:first-child { min-height: 0; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); }
+  .callout { grid-template-columns: 1fr; gap: 7px; }
+}
+@media (max-width: 560px) {
+  .shell { padding: 24px 18px 60px; }
+  h1 { font-size: 40px; }
+  .dek { font-size: 15px; }
+  .lead { font-size: 17px; }
+  .grid { grid-template-columns: 1fr; }
+  .source-list { columns: 1; }
+  .compare { display: block; overflow-x: auto; white-space: normal; }
+}
+</style>
+<div class="shell">
+  <header class="masthead">
+    <div>
+      <div class="kicker">Project retrospective / interview brief</div>
+      <h1>每日公众号资讯整理工具</h1>
+      <p class="dek">面向游戏行业客户拓展，把公众号资讯的收集、筛选、分析和报告输出整理成一套稳定、可复用的工具。</p>
+    </div>
+    <div class="meta"><strong>2026.08.31</strong>基于项目文件、运行记录、日报产物与迁移改造复盘<br><br>用途：面试前快速回顾、项目讲解、后续迭代决策</div>
+  </header>
+
+  <div class="layout">
+    <nav class="rail" aria-label="报告目录">
+      <div class="rail-title">Contents</div>
+      <a href="#quick">项目概述</a>
+      <a href="#why">项目背景</a>
+      <a href="#scenes">工作场景</a>
+      <a href="#architecture">构建思路</a>
+      <a href="#timeline">迭代过程</a>
+      <a href="#problems">问题与处理</a>
+      <a href="#results">结果与边界</a>
+      <a href="#interview">面试准备</a>
+      <a href="#next">下一步</a>
+    </nav>
+
+    <main>
+      <section id="quick">
+        <div class="section-head"><span class="section-no">00</span><h2>项目概述</h2></div>
+        <p class="lead">本项目是一个<strong>面向游戏行业客户拓展的公众号资讯分析工具</strong>，用来把分散的文章整理成有重点、方便回看的行业信息。它覆盖了文章收集、正文获取、相关性判断、事件分类、重复信息合并、报告撰写和网页发布。</p>
+        <div class="thesis"><p><strong>项目定位：</strong>针对云计算/AI 厂商拓展游戏行业客户时的信息搜集需求，搭建以 WeWe RSS 为文章入口、Python 为流程控制、Claude 为分析助手、Markdown/HTML 为输出的日报工具。随着使用深入，系统又增加了健康检查、限流重试、OCR、去重、静态发布、环境变量配置和 Skill 迁移。</p></div>
+        <div class="grid">
+          <div class="metric"><span class="value">425</span><span class="label">2026-08-19 至 08-30 抓取的原始文章</span></div>
+          <div class="metric"><span class="value">400</span><span class="label">成功抓取正文的文章，成功率约 94.1%</span></div>
+          <div class="metric"><span class="value">51</span><span class="label">当前项目中可查看的历史日报 HTML</span></div>
+        </div>
+        <p class="muted">这些是项目运行记录里的阶段性数据，还不能直接说明节省了多少人工时间。比较准确的说法是：这个工具已经从一次性的 AI 总结，变成了一套有固定输入、处理步骤、异常提示和报告输出的工作流程。</p>
+      </section>
+
+      <section id="why">
+        <div class="section-head"><span class="section-no">01</span><h2>项目背景</h2></div>
+        <h3>原来的工作问题</h3>
+        <ul>
+          <li><strong>信息源多：</strong>要同时关注阿里、华为、腾讯、字节的云和 AI 动态，以及游戏媒体、游戏厂商和平台政策。</li>
+          <li><strong>需要关注重点：</strong>重点不是泛泛看新闻，而是找与游戏客户有关的合作、AI 应用、产品、融资和行业变化。</li>
+          <li><strong>人工整理重复：</strong>每天要打开多个公众号，判断文章是否相关、阅读正文、提取数据、合并重复报道，再按固定格式写报告。</li>
+          <li><strong>原始信息不完整：</strong>RSS 通常只有标题和链接，正文要逐篇打开；同一事件也可能有不同时间、说法和数据。</li>
+          <li><strong>需要长期积累：</strong>单日看完还不够，还要能按日期回看，持续了解产品和行业变化。</li>
+        </ul>
+        <h3>我重新想了一下需求</h3>
+        <p>要解决的并不只是“让 AI 总结文章”，而是把每天变化、格式各异的文章，整理成一份稳定、方便使用的报告。所以我先把收集、筛选和分类规则定下来，再让 AI 处理需要理解上下文的部分。</p>
+        <div class="compare">
+          <table class="compare"><tr><th>原来的方式</th><td>分别打开文章 → 凭印象判断是否相关 → 手动摘录 → 遇到重复报道再返工 → 报告格式不稳定</td></tr><tr><th>工具化后的方式</th><td>RSS 统一收集 → 批量获取正文 → 按规则筛选 → AI 辅助归类和合并 → 固定格式输出 → 异常单独列出</td></tr></table>
+        </div>
+      </section>
+
+      <section id="scenes">
+        <div class="section-head"><span class="section-no">02</span><h2>使用场景</h2></div>
+        <h3>场景 A：每日竞品与行业扫描</h3>
+        <p>每天围绕四家重点友商和游戏行业媒体生成一份固定格式的报告。先看核心内容，再看友商合作、AI 游戏与相关项目、企业动态、客户动态和行业报告，用于晨会、周会或业务跟进前快速了解情况。</p>
+        <h3>场景 B：识别游戏客户的云与 AI 需求</h3>
+        <p>报告不是简单摘抄新闻，而是重点看“云/AI 厂商—游戏客户—解决方案”这条关系。比如，游戏公司使用 AI 做美术、测试、广告素材或数据分析时，可以进一步判断他们可能需要哪些算力、模型、存储和开发服务。</p>
+        <h3>场景 C：跟踪游戏产品与企业经营信号</h3>
+        <p>把新游上线、测试、市场表现、长线运营、财报和融资分别归类。同一项目可能同时反映产品机会、技术应用和公司经营情况，因此主要看文章在讲什么，以及事件实际发生的时间，而不是只看标题。</p>
+        <h3>场景 D：保留和复用历史信息</h3>
+        <p>Markdown 方便继续编辑，HTML 方便浏览和分享；历史报告按日期保存，可以回看产品、平台政策、出海趋势和 AI 应用的变化。后来做迁移时，又把“只看报告”和“重新运行工具”分成两个包，避免互相影响。</p>
+        <div class="quote"><p><strong>应用价值：</strong>对业务工作来说，AI 提效不仅是缩短一次处理时间，也包括把已经形成的规则、结构和判断方法保留下来，方便后续继续使用。</p></div>
+      </section>
+
+      <section id="architecture">
+        <div class="section-head"><span class="section-no">03</span><h2>系统设计</h2></div>
+        <h3>数据处理流程</h3>
+        <div class="pipeline">
+          <div class="step"><div class="step-num">01 / SOURCE</div><h4>订阅采集</h4><p>WeWe RSS 通过微信读书账号同步公众号更新，Docker 容器和 SQLite 数据卷保存文章元数据。</p></div>
+          <div class="step"><div class="step-num">02 / FETCH</div><h4>正文获取</h4><p>Python 按北京时间筛选目标日期，用移动端 UA 逐篇获取微信正文，并输出结构化 JSON。</p></div>
+          <div class="step"><div class="step-num">03 / ANALYZE</div><h4>语义分析</h4><p>Claude 根据规则和模板判断归属、提取重点、合并重复事件，并形成统一表达。</p></div>
+          <div class="step"><div class="step-num">04 / PUBLISH</div><h4>报告发布</h4><p>Markdown 保留编辑能力，网页生成器输出 HTML 报告，便于浏览、回看和分享。</p></div>
+          <div class="step"><div class="step-num">05 / REVIEW</div><h4>结果复核</h4><p>健康检查、失败状态、待确认清单和 OCR 结果用于标识不确定内容，人工复核关键边界。</p></div>
+        </div>
+        <h3>各部分分别负责什么</h3>
+        <ul>
+          <li><strong>程序负责固定步骤：</strong>日期筛选、RSS 扫描、正文抓取、文件保存、网页生成和状态记录由程序完成，保证每次流程基本一致。</li>
+          <li><strong>AI 负责理解内容：</strong>文章主体判断、重复报道合并、重点提炼、分点表达和行业意义归纳交给 Claude 辅助完成。</li>
+          <li><strong>人工负责关键判断：</strong>融资实际时间、活动预告与已发生事件的区分、榜单图片是否完整，以及报告能否对外分享，仍需结合证据确认。</li>
+          <li><strong>不同格式各有用途：</strong>JSON 用于处理过程，Markdown 用于编辑，HTML 用于阅读，Skill 用于迁移和复用这套流程。</li>
+        </ul>
+        <div class="callout"><div class="callout-label">关键设计</div><p><strong>保留“待确认清单”。</strong>正文抓取失败、榜单图片缺失、来源重复或分类存疑时，不强行下结论，而是保留问题和原文，方便后续人工核对。</p></div>
+      </section>
+
+      <section id="timeline">
+        <div class="section-head"><span class="section-no">04</span><h2>迭代过程</h2></div>
+        <div class="timeline">
+          <div class="event"><div class="event-date">2026.07.07</div><h3>建立竞争对手观察框架</h3><p>形成竞争对手模板，明确阿里、华为、腾讯、字节四家友商，以及合作动态/其他动态两张表。</p></div>
+          <div class="event"><div class="event-date">2026.07.15 — 07.20</div><h3>从竞对监控扩展至行业情报</h3><p>补充行业模板与总规则，加入 AI 游戏、AI 游戏相关项目、企业动态、客户动态、行业报告和 GameRes 特殊处理。</p></div>
+          <div class="event"><div class="event-date">2026.07.20</div><h3>引入图像信息识别能力</h3><p>加入基于 macOS Vision 的 OCR 脚本，用于读取 GameRes 周预告和排行榜等正文无法直接覆盖的图片表格。</p></div>
+          <div class="event"><div class="event-date">2026.07.27</div><h3>将反馈转化为可执行的写作规范</h3><p>根据报告反馈固定核心看点、表格字段、HTML 列表嵌套、分点层级、黑马产品详略和不使用配图等规范。</p></div>
+          <div class="event"><div class="event-date">2026.08.17 — 08.18</div><h3>进入持续日报运行</h3><p>持续产出日报，开始暴露 RSS 延迟、账号掉线、正文抓取失败、文章重复和报告日期边界等真实运行问题。</p></div>
+          <div class="event"><div class="event-date">2026.08.19 — 08.30</div><h3>开展历史数据补全与批量处理</h3><p>历史补整理 12 天共抓取 425 篇文章，成功获取 400 篇正文；通过并行抓取、逐日整理、链接覆盖核验和网页重新生成完成历史回填。</p></div>
+          <div class="event"><div class="event-date">2026.08.31</div><h3>推进跨设备迁移与能力复用</h3><p>发现网页查看、完整运行、Claude Skill 和实时后端解决的是不同问题，于是拆分静态报告包、源码运行包和 Skill 包，并开始清理绝对路径与凭据依赖。</p></div>
+        </div>
+      </section>
+
+      <section id="problems">
+        <div class="section-head"><span class="section-no">05</span><h2>问题与改进</h2></div>
+        <div class="issue"><div class="num">01</div><div><h4>RSS 抓取不全，微信读书账号会掉线</h4><p><strong>表现：</strong>有些订阅号长时间没有更新，健康检查还曾发现微信读书账号失效。<br><strong>处理：</strong>增加健康检查；整理前先刷新一次；当天没有文章的订阅号按间隔重试；账号失效时暂停流程，提醒重新扫码，不继续生成可能不完整的报告。<br><strong>经验：</strong>自动化首先要知道什么时候没有拿到数据，不能把空结果当成“当天没有变化”。</p></div></div>
+        <div class="issue"><div class="num">02</div><div><h4>RSS 只有标题和链接，正文还要单独获取</h4><p><strong>表现：</strong>正文需要逐篇请求，部分文章会返回空内容、限制页或错误页。<br><strong>处理：</strong>单独编写正文抓取脚本；使用移动端 UA；记录每篇文章的成功或失败状态；用 JSON 保存标题、来源、时间、链接、正文和错误原因；失败文章进入待确认清单。<br><strong>经验：</strong>单篇文章失败不应该影响整份日报，抓取和整理需要分开处理。</p></div></div>
+        <div class="issue"><div class="num">03</div><div><h4>同一事件经常被多家媒体重复报道</h4><p><strong>表现：</strong>《凡应》《湮灭之潮》《剑网3》《诡秘之主》等事件在同一天有多篇报道。<br><strong>处理：</strong>从按文章整理改为按事件整理；选择信息较完整的报道作为主条目，补充其他报道中的新增事实，保留所有原文链接，重复稿放入待确认清单。<br><strong>经验：</strong>报告应该帮助人理解发生了什么，而不是简单增加文章数量。</p></div></div>
+        <div class="issue"><div class="num">04</div><div><h4>榜单和周预告的重要数据在图片里</h4><p><strong>表现：</strong>排行榜完整数据和 GameRes 总览表通常不在正文文本中。<br><strong>处理：</strong>加入 OCR；GameRes 只整理规则要求的删档测试；没有图片时不猜测数据，并在报告中说明哪些内容没有核验。<br><strong>经验：</strong>材料不完整时要明确说明，而不是为了让报告看起来完整而补写内容。</p></div></div>
+        <div class="issue"><div class="num">05</div><div><h4>网页表格排版不够美观</h4><p><strong>表现：</strong>长标题链接不能换行，挤占了其他列的宽度，正文出现逐字竖排。<br><strong>处理：</strong>检查 CSS 后发现链接列设置了 `white-space: nowrap`；改为固定列宽、允许链接换行，并重新生成页面检查效果。<br><strong>经验：</strong>文件生成成功不代表页面使用体验良好，还需要检查实际打开后的效果。</p></div></div>
+        <div class="issue"><div class="num">06</div><div><h4>一开始只能在当前电脑运行</h4><p><strong>表现：</strong>一些脚本使用了当前电脑的固定路径和授权配置，报告、运行数据和临时文件也放在同一个项目目录中。<br><strong>处理：</strong>增加统一 `config.py`；项目路径改为从脚本位置读取，也支持环境变量；WeWe 授权码改为环境变量或 Keychain；网页服务默认只在本机运行；补充依赖清单、`.env.example`、`.gitignore`、静态导出和迁移 Skill。<br><strong>经验：</strong>项目真正被使用一段时间后，才会发现可维护和可迁移方面的问题，这些问题需要在后续迭代中补齐。</p></div></div>
+      </section>
+
+      <section id="results">
+        <div class="section-head"><span class="section-no">06</span><h2>项目成效与边界</h2></div>
+        <h3>阶段性成果</h3>
+        <ul>
+          <li>从文章收集到 HTML 报告的流程已经跑通，日常整理不再需要从头设计格式和栏目。</li>
+          <li>规则从最初的竞品和行业分类，逐步细化到字段、事件类型、时间判断、重复报道处理、OCR 和待确认内容。</li>
+          <li>截至 8 月底，项目已经保存 51 份 HTML 历史报告，可以按日期回看。</li>
+          <li>历史补整理阶段处理了 12 天、425 篇文章；其中 25 篇未能成功获取正文，已保留在待确认清单。</li>
+          <li>工具目前可以分别作为静态报告、完整源码和 Claude Skill 进行迁移。</li>
+        </ul>
+        <h3>几个重要选择</h3>
+        <table class="compare"><tr><th>选择</th><th>原因</th></tr><tr><td><strong>先定规则，再让 AI 总结</strong></td><td>保证日报格式基本一致，也减少 AI 每天改变重点和结构的情况。</td></tr><tr><td><strong>不确定内容也保留</strong></td><td>抓取失败、分类存疑和重复报道放到待确认清单，方便后续人工核对。</td></tr><tr><td><strong>保留人工复核</strong></td><td>账号授权、事件实际时间、图片内容和对外分享范围，不能完全交给自动流程。</td></tr><tr><td><strong>先在本地验证</strong></td><td>先把工作流程跑通，再决定是否上云，避免一开始就增加部署和权限管理成本。</td></tr></table>
+        <h3>当前边界</h3>
+        <ul>
+          <li>尚未建立严格的人工时间基线、阅读时长对比、错误率趋势或业务转化指标，因此不能直接宣称“节省了多少工时”或“带来了多少客户”。</li>
+          <li>WeWe RSS 和微信读书授权仍是外部依赖，账号掉线和接口限流无法由工具完全消除。</li>
+          <li>公众号正文、运行 JSON 和缓存文件涉及版权、隐私和第三方 API 处理边界，分发时必须与静态报告隔离。</li>
+          <li>Skill 可以迁移规则和操作知识，但不会自动提供 Docker、WeWe 数据库、微信读书授权或 API Key。</li>
+        </ul>
+      </section>
+
+      <section id="interview">
+        <div class="section-head"><span class="section-no">07</span><h2>面试准备</h2></div>
+        <h3>90 秒项目介绍</h3>
+        <div class="thesis"><p><strong>项目介绍：</strong>我做了一套公众号资讯整理工具，主要服务于云计算/AI 厂商拓展游戏行业客户的工作。原来的流程是分别打开多个公众号，逐篇判断、摘录和整理，既耗时，也容易漏掉信息或重复整理。现在由 WeWe RSS 负责收集文章，Python 负责按日期获取正文和记录状态，Claude 辅助分类、合并重复报道和撰写摘要，最后输出 Markdown 和 HTML 报告。项目从竞争对手模板开始，后来扩展到行业四个模块，并逐步处理了账号掉线、接口限流、图片榜单、网页排版和跨设备迁移等问题。阶段性结果是 12 天抓取 425 篇文章，成功获取 400 篇正文，并保存了 51 份历史 HTML 报告。下一步会补充人工时间和准确率等指标，再评估是否需要多人共享。</p></div>
+        <details class="answer" open><summary>为什么没有让 AI 直接读取 RSS 并输出报告？</summary><p><strong>回答主线：</strong>文章收集、日期筛选、失败重试和文件输出都有明确规则，交给程序更稳定；判断文章是否相关、合并重复报道和提炼重点，需要理解上下文，适合让 Claude 辅助完成。这样出了问题也比较容易判断，是文章没有抓到，还是分析结果需要调整。</p><p>实际做法是：WeWe RSS 负责收集，Python 负责抓取和记录状态，Claude 负责分类和撰写，Markdown/HTML 负责输出。</p></details>
+        <details class="answer"><summary>你遇到过最典型的问题是什么？</summary><p><strong>回答主线：</strong>最典型的问题是 RSS 和微信读书账号不稳定。健康检查曾发现账号失效，自动任务因此在发布前停止；账号恢复后，接口仍会限流，部分订阅号也可能暂时没有返回当天文章。</p><p>我增加了健康检查和全量刷新，对缺少当天文章的来源按时间间隔重试；每篇正文单独记录成功或失败，无法确认的内容放进待确认清单。这个过程让我认识到，自动化流程需要同时设计正常流程和异常处理。</p></details>
+        <details class="answer"><summary>这个工具的 AI 提效体现在哪里？</summary><p><strong>回答主线：</strong>AI 主要帮我完成三类工作：判断文章是否和业务有关，把多篇报道合并成一个事件，以及把不同文章整理成统一格式。我的工作从逐篇摘录，转向制定规则、检查事实、处理特殊情况和使用报告结论。</p><p>AI 不直接作为事实来源。正文需要先获取，关键数据保留原文链接，无法确认的内容保留待确认状态。</p></details>
+        <details class="answer"><summary>如果重新建设，你会优先改进什么？</summary><p><strong>回答主线：</strong>第一，尽早记录人工处理时间和准确率，清楚比较工具带来的变化；第二，一开始就统一配置并固定依赖版本，减少后期迁移时的返工；第三，为每个事件建立固定编号和来源记录，方便持续跟踪同一产品或公司。</p></details>
+        <h3>高频追问关键词</h3>
+        <ul><li>需求定义：信息过载、客户拓展、竞品与行业双重视角</li><li>架构：RSS / Docker / SQLite / Python / Claude / Markdown / HTML</li><li>可靠性：健康检查、限流重试、失败隔离、待确认清单</li><li>质量：规则、模板、去重、事件实际发生时间、OCR</li><li>工程化：配置抽象、环境变量、静态导出、依赖清单、可迁移 Skill</li><li>边界：版权、凭据、账号授权、没有夸大的 ROI 指标</li></ul>
+      </section>
+
+      <section id="next">
+        <div class="section-head"><span class="section-no">08</span><h2>后续规划</h2></div>
+        <h3>P0：先把安全和运行稳定性做好</h3>
+        <ul><li>更换曾经出现在旧日志和旧配置中的 WeWe 授权码。</li><li>把项目放入 Git，保留规则、配置和模板的修改记录。</li><li>固定 Python 和依赖版本，补充日期判断、授权码缺失、正文为空、重复链接和静态导出等测试。</li></ul>
+        <h3>P1：记录实际的效率变化</h3>
+        <ul><li>记录人工整理需要多长时间，包括阅读、写初稿和修改的时间。</li><li>记录正文获取成功率、文章覆盖情况、重复报道合并情况和人工修改量。</li><li>定期抽查分类结果，确认报告质量是否稳定。</li></ul>
+        <h3>P2：支持按公司和产品长期回看</h3>
+        <ul><li>为公司、游戏、模型和事件建立统一记录。</li><li>给同一事件固定编号，支持跨日期合并和查看发展过程。</li><li>增加客户机会字段，记录可能的需求、技术切入点、后续建议和证据链接。</li></ul>
+        <h3>P3：评估多人共享</h3>
+        <ul><li>继续使用静态报告作为简单的分享方式。</li><li>如果确实需要多人实时检查更新，再考虑部署带登录和权限控制的远程服务。</li><li>Skill 可以迁移操作方法，但每台电脑仍需单独配置 RSS、微信读书账号、数据库和 API Key。</li></ul>
+        <div class="callout"><div class="callout-label">复盘结论</div><p>这个项目值得重点介绍的，不只是调用了一个大模型，而是从实际工作出发，逐步补充规则、状态记录、异常处理、质量检查和迁移能力。它体现了我对业务问题的理解，以及把 AI 工具真正用于日常工作的过程。</p></div>
+      </section>
+
+      <section id="sources">
+        <div class="section-head"><span class="section-no">APPENDIX</span><h2>事实依据</h2></div>
+        <ul class="source-list">
+          <li><span class="mono">规则.md</span>：业务目标、四模块分类、时效与 OCR 规则</li>
+          <li><span class="mono">模版/竞争对手整理模版.md</span>：竞对表格与核心看点格式</li>
+          <li><span class="mono">模版/行业整理模版.md</span>：AI、企业、客户、行业模块格式</li>
+          <li><span class="mono">健康检查.py</span>：RSS、账号和停更源检查逻辑</li>
+          <li><span class="mono">刷新到最新.py</span>：全量刷新与间隔重试逻辑</li>
+          <li><span class="mono">tools/fetch_articles.py</span>：按中国时区读取 SQLite、抓取正文和状态输出</li>
+          <li><span class="mono">每日自动整理.py</span>：健康检查、刷新、抓取、AI 整理和发布编排</li>
+          <li><span class="mono">生成网页.py</span>：Markdown 到 HTML、静态导出和表格排版</li>
+          <li><span class="mono">runs/2026-08-19 至 2026-08-30/articles.json</span>：历史补整理的文章统计</li>
+          <li><span class="mono">每日整理/、网页版/</span>：日报与网页历史产物</li>
+          <li><span class="mono">.claude/skills/zixun-daily/SKILL.md</span>：迁移后的安装、Docker、WeWe RSS 和整理流程</li>
+        </ul>
+      </section>
+
+      <footer class="footer">这份报告用于面试复盘和项目讲解。数字指标来自阶段性运行记录；对外展示时，继续区分“已验证事实”“合理推断”和“尚未建立的指标”。</footer>
+    </main>
+  </div>
+</div>
